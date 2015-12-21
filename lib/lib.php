@@ -10,7 +10,14 @@ function reverseSearchAddress(&$bagDB, $lat=0, $lon=0, $radius=CONST_Default_Rad
 	
 	$query = "SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})";
 	$bag = $bagDB->getRow($query);
-	if (PEAR::IsError($bag)) {
+
+    if (PEAR::IsError($bag)) {
+        if (CONST_Debug) {
+            echo 'Standard Message: ' . $bagDB->getMessage() . "\n";
+            echo 'Standard Code: ' . $bagDB->getCode() . "\n";
+            echo 'DBMS/User Message: ' . $bagDB->getUserInfo() . "\n";
+            echo 'DBMS/Debug Message: ' . $bagDB->getDebugInfo() . "\n";
+        }
 		exit("reverseSearchAddress DBerror: ".$bag->getMessage());
 	}
 	$address = Array();
@@ -135,7 +142,7 @@ function searchAddress(&$bagDB, $text, $maxRecords=20) {
 }
 
 function rd2wgs ($x, $y) {
-	// Calculate WGS84 coördinates
+	// Calculate WGS84 coï¿½rdinates
 	$dX = ($x - 155000) * pow(10, - 5);
 	$dY = ($y - 463000) * pow(10, - 5);
 	$SomN = (3235.65389 * $dY) + 
@@ -189,7 +196,7 @@ function wgs2rd ($lat, $lon) {
 	$c23=     0.148;	$d04=     0.092;
 				$d14=    -0.054;
 
-	// Volgens "Benaderingsformules voor de transformatie, tussen RD- en WGS84-kaartcoördinate"
+	// Volgens "Benaderingsformules voor de transformatie, tussen RD- en WGS84-kaartcoï¿½rdinate"
 	// http://www.dekoepel.nl/pdf/Transformatieformules.pdf
 	$SomX = ($c01 * $dL) + ($c11 * $dF * $dL) + ($c21 * pow($dF,2) * $dL) + ($c03 * pow($dL,3)) + ($c10 * $dF) + ($c31 * pow($dF,3) * $dL) + ($c13 * $dF * pow($dL,3)) + ($c02 * pow($dL,2)) + ($c23 * pow($dF,2) * pow($dL,3));
 	$SomY = ($d10 * $dF) + ($d02 * pow($dL,2)) + ($d20 * pow($dF,2)) + ($d12 * $dF * pow($dL,2)) + ($d30 * pow($dF,3)) + ($d01 * $dL) + ($d22 * pow($dF,2) * pow($dL,2)) + ($d11 * $dF * $dL) + ($d04 * pow($dL,4)) + ($d14 * $dF * pow($dL,4));
