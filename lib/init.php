@@ -23,7 +23,7 @@
 	$bagDB =& DB::connect(CONST_Database_DSN, false);
 	if (PEAR::IsError($bagDB))
 	{
-		exit($bagDB->getMessage(). ': Unable to connect to the database');
+		exit("Unable to connect to the database: ". $bagDB->getMessage());
 	}
 	
 	$bagDB->setFetchMode(DB_FETCHMODE_ASSOC);
