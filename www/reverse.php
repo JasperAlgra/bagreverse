@@ -1,6 +1,6 @@
 <?php
 	define("CONST_BulkUserIPs",'');
-	require_once('lib/init.php');
+	require_once('../lib/init.php');
 
 	if (strpos(CONST_BulkUserIPs, ','.$_SERVER["REMOTE_ADDR"].',') !== false)
 	{
@@ -53,6 +53,6 @@
 		
 	}
 	
-	include('output/address-'.$sOutputFormat.'.php');
+	include('../output/address-'.$sOutputFormat.'.php');
 	
 ?>
