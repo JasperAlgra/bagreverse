@@ -14,7 +14,7 @@
 		exit;
 	}
 
-	if (strpos(CONST_BlockedIPs, ','.$_SERVER["REMOTE_ADDR"].',') !== false) {
+	if (strpos(CONST_BlockedIPs, ','.@$_SERVER["REMOTE_ADDR"].',') !== false) {
 		echo "Your IP has been blocked. \n";
 		exit;
 	}
