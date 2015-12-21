@@ -23,10 +23,10 @@
 	$bagDB =& DB::connect(CONST_Database_DSN, false);
 	if (PEAR::IsError($bagDB))
 	{
-		echo 'Standard Message: ' . $db->getMessage() . "\n";
-		echo 'Standard Code: ' . $db->getCode() . "\n";
-		echo 'DBMS/User Message: ' . $db->getUserInfo() . "\n";
-		echo 'DBMS/Debug Message: ' . $db->getDebugInfo() . "\n";
+		echo 'Standard Message: ' . $bagDB->getMessage() . "\n";
+		echo 'Standard Code: ' . $bagDB->getCode() . "\n";
+		echo 'DBMS/User Message: ' . $bagDB->getUserInfo() . "\n";
+		echo 'DBMS/Debug Message: ' . $bagDB->getDebugInfo() . "\n";
 
 		exit("Unable to connect to the database: ". $bagDB->getMessage());
 	}
