@@ -1,0 +1,22 @@
+{
+  "name": "yarp/bagreverse",
+  "description": "reverse searching on BAG database",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Jasper Algra",
+      "email": "jasper@yarp-bv.nl"
+    }
+  ],
+  "repositories": [
+  ],
+  "require": {
+    "vlucas/phpdotenv": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bag\\": "lib/bag"
+    }
+  }
+}

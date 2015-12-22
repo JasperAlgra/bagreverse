@@ -35,6 +35,7 @@ if (PEAR::IsError($bagDB)) {
 $bagDB->setFetchMode(DB_FETCHMODE_ASSOC);
 $bagDB->query("SET DateStyle TO 'sql,european'");
 $bagDB->query("SET client_encoding TO 'utf-8'");
+$bagDB->query("SET search_path TO ". CONST_Database_search_path);
 
 // header('Content-type: text/html; charset=utf-8');
 

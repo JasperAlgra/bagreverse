@@ -6,6 +6,7 @@
 	@define('CONST_BlockedIPs', ',85.22.48.42,66.249.71.236,');
 
 	@define('CONST_Database_DSN', 'pgsql://bag:bag@geo1.eztrack.nl/bag');
+	@define('CONST_Database_search_path', 'bag_geocode,bagactueel,public');
 
 	@define('CONST_Default_Language', 'nl');
 	@define('CONST_Default_Lat', 52.011788);

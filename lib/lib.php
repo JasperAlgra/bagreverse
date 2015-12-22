@@ -18,10 +18,16 @@
 		if (!$lat || !$lon) return Array();
 
 		$rd = wgs2rd($lat, $lon);
-		$x = $rd['x'];
-		$y = $rd['y'];
+        $x = $rd['x'];
+        $y = $rd['y'];
 
-		$radius = 100000;
+//        $bagDB->query("SET search_path TO ".CONST_Database_search_path);
+//        if (PEAR::IsError($bagDB)) {
+//            printDbError($bagDB);
+//            exit("reverseSearchAddress DBerror: " . $bagDB->getMessage());
+//        }
+
+//		$query = "SET search_path TO ".CONST_Database_search_path ."; SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})";
 		$query = "SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})";
 		$bag = $bagDB->getRow($query);
 

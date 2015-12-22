@@ -3,13 +3,26 @@
 * clone repo
 
 * install apache + php + pear
-  apt-get install apache2 php5-pgsql php5-mysql
+  Linux: apt-get install apache2 php5-pgsql php5-mysql
+  Windows/xampp: extension=php_pgsql.dll (enable)
 
 * Postgres, maak user "bag" met rechten op database bag
   sudo -u postgres createuser -SDRP bag
   psql bag
   GRANT usage ON SCHEMA public TO "bag";
   GRANT SELECT ON ALL TABLES IN SCHEMA public TO "bag";
+  GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "bag";
+
+  GRANT USAGE ON SCHEMA bagactueel TO "bag";
+  GRANT ALL PRIVILEGES ON SCHEMA bagactueel TO "bag";
+  GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA bagactueel TO "bag";
+  
+  GRANT USAGE ON SCHEMA bag_geocode TO "bag";
+  GRANT ALL PRIVILEGES ON SCHEMA bag_geocode TO "bag";
+  GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA bag_geocode TO "bag";
+  
+  GRANT USAGE ON SCHEMA bagaveen TO "bag";
+  GRANT SELECT ON ALL TABLES IN SCHEMA bagaveen TO "bag";
 
 * Link www dir naar apache
   * vhost: /bag  -> /bagreverse/www
