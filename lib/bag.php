@@ -133,7 +133,7 @@
             foreach ($this->BAGResults as $address) {
 
                 // Addressparts
-                $addressParts = $xmlDoc->createElement("addressParts");
+                $addressParts = $xmlDoc->createElement("addressparts");
 
                 // House nummber
                 $houseNumber = $address->huisnummer
