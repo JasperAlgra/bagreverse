@@ -1,58 +1,43 @@
 <?php
-	define("CONST_BulkUserIPs",'');
-	require_once('../lib/init.php');
+    /**
+     * [Short description for file]
+     *
+     * [Long description for file (if any)...]
+     *
+     * @category   EuropeTrack 2.0
+     * @package    EuropeTrack 2.0
+     * @author     Jasper Algra <jasper@yarp-bv.nl>
+     * @copyright  (C)Copyright 2015 YARP B.V.
+     * @version    CVS: $Id:$
+     * @since      22-12-2015 / 17:48
+     */
 
-	if (strpos(CONST_BulkUserIPs, ','.$_SERVER["REMOTE_ADDR"].',') !== false)
-	{
-			$fLoadAvg = getLoadAverage();
-			if ($fLoadAvg > 2) sleep(60);
-			if ($fLoadAvg > 4) sleep(120);
-			if ($fLoadAvg > 6)
-			{
-					echo "Bulk User: Temporary block due to high server load\n";
-					exit;
-			}
-	}
+    include('../lib/bag.php');
 
-	ini_set('memory_limit', '200M');
+    $bag = new bag\bag();
 
-	// Format for output
-	$sOutputFormat = 'xml';
-	if (isset($_GET['format']) && ($_GET['format'] == 'xml' || $_GET['format'] == 'json' || $_GET['format'] == 'jsonv2')) {
-			$sOutputFormat = $_GET['format'];
-	}
-	
-	if (false) {
-		// If place_id is given.. use it to get the info...
-	} else {
-		
-		$fLat = (float)$_GET['lat'];
-		$fLon = (float)$_GET['lon'];
-		
-		$address = reverseSearchAddress($bagDB, $fLat, $fLon);
-	}
+    $latLngs = Array();
 
-	$objects = Array();
-	
-	if (count($address)) {
-		
-		$object = Array(
-						'place_id' 		=> 0,
-						'osm_type' 		=> 'node',
-						'osm_id' 		=> 0,
-						'lat' 			=> $fLat,
-						'lon' 			=> $fLon,
-						'ref' 			=> 0,
-		);
-		
-		$object['langaddress'] = "";
-		foreach ($address as $item)
-			$object['langaddress'] .= ($object['langaddress']?", ":null).$item;
-			
-		$objects[] = $object;
-		
-	}
-	
-	include('../output/address-'.$sOutputFormat.'.php');
-	
-?>
+    // Get single lat/lon from GET
+    if (isset($_GET['lat']) AND isset($_GET['lon'])) {
+        $latLngs[] = Array($_GET['lat'], $_GET['lon']);
+    }
+
+    // Get array of lats/lons from GET or POST
+    if (isset($_GET['latLngs'])) {
+        $latLngs= json_decode($_GET['latLngs']);
+    } elseif (isset($_POST['latLngs'])) {
+        $latLngs= json_decode($_POST['latLngs']);
+    }
+
+//    die (json_encode(Array(
+//        Array(51.410433, 5.454866),
+//        Array(51.410433, 5.454866),
+//    )));
+
+    // Search + output XML
+    header("content-type: text/xml; charset=UTF-8");
+    header("Access-Control-Allow-Origin: *");
+    $bag
+        ->search($latLngs)
+        ->outputXml();
