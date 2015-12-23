@@ -34,6 +34,11 @@
 
         public function __construct() {
 
+            // Check for .env file
+            if (!file_exists('../.env')) {
+                die("No .env file found. Create one, see .env.example");
+            }
+
             // Get config from .env file
             $dotEnv = new Dotenv('..');
             $dotEnv->load();
