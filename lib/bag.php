@@ -15,6 +15,7 @@
     namespace bag;
 
     use DB;
+    use DOMDocument;
     use Dotenv\Dotenv;
 
     require '../vendor/autoload.php';
@@ -25,15 +26,11 @@
     class bag
     {
 
-        /**
-         * @var DB
-         */
+        /** @var \DB */
         var $DB;
 
-        /**
-         * @var
-         */
-        var $config;
+        /** @var array for storing BAG results */
+        var $BAGResults;
 
         public function __construct() {
 
@@ -41,27 +38,32 @@
             $dotEnv = new Dotenv('..');
             $dotEnv->load();
 
+            // Create connection to the postgres DB
             $this->initDb();
 
         }
 
         /**
-         *
+         * setup connection to postgres DB
+         * connects or dies
          */
         private function initDb() {
 
+            // Full DNS for connection to postgres
             $DSN = Array(
                 'username' => env('DB_USERNAME'),
                 'password' => env('DB_PASSWORD'),
-                'phptype' => 'pgsql',
+                'phptype'  => 'pgsql',
                 'hostspec' => env('DB_HOST'),
                 'port'     => env('DB_PORT'),
                 'database' => env('DB_DATABASE'),
             );
 
 
+            // Connect to postgres DB
             $this->DB = DB::connect($DSN);
 
+            // Die on error
             if (\PEAR::IsError($this->DB)) {
                 if (env('APP_DEBUG')) {
                     echo 'Standard Message: ' . $this->DB->getMessage() . "\n";
@@ -74,31 +76,119 @@
             }
 
 
-            $this->DB->setFetchMode(DB_FETCHMODE_ASSOC);
+            $this->DB->setFetchMode(DB_FETCHMODE_OBJECT);
             $this->DB->query("SET DateStyle TO 'sql,european'");
             $this->DB->query("SET client_encoding TO 'utf-8'");
             $this->DB->query("SET search_path TO " . env('DB_SEARCH_PATH'));
 
         }
 
-        public function search($lat, $lon, $radius = 500, $maxRecords = 1) {
+        /**
+         * @param array $latLngs
+         * @param int   $radius
+         *
+         * @return $this
+         */
+        public function search(array $latLngs, $radius = 500) {
 
-            // Convert lat/lon to RijksDriehoek
-            $rd = wgs2rd($lat, $lon);
-            $x = $rd['x'];
-            $y = $rd['y'];
+            // Max records per lat/lng
+            $maxRecords = 1;
 
+            // Lookup all lat/lngs
+            foreach ($latLngs as $latLng) {
 
-            /** @var PEAR\db $this->DB */
-            $row = $this->DB->getRow("SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})");
+                // Convert lat/lon to RijksDriehoek
+                $rd = wgs2rd($latLng[0], $latLng[1]);
+                $x = $rd['x'];
+                $y = $rd['y'];
 
-    }
+                // Do lookup
+                $rows = $this->DB->getRow("SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})");
 
-        public function outputXml(array $bagAddress) {
+                // Add result to BAGResults var
+                $this->BAGResults[] = $rows;
+            }
+
+            // Return self
+            return $this;
 
         }
 
-        private function bagQuery($query) {
+        public function outputXml() {
 
+            $xmlDoc = new DOMDocument('1.0', 'UTF-8');
+
+            /* create the root element of the xml tree */
+            $xmlRoot = $xmlDoc->createElement("reversegeocode");
+            $xmlRoot->setAttribute('timestamp', Date(DATE_RFC822));
+
+            /* append it to the document created */
+            $xmlRoot = $xmlDoc->appendChild($xmlRoot);
+
+            foreach ($this->BAGResults as $address) {
+
+                // Addressparts
+                $addressParts = $xmlDoc->createElement("addressParts");
+
+                // House nummber
+                $houseNumber = $address->huisnummer
+                    . ($address->huisletter ? $address->huisletter : NULL)
+                    . ($address->toevoeging ? " " . $address->toevoeging : NULL);
+                $addressPart = $xmlDoc->createElement('house_numer',$houseNumber);
+                $addressParts->appendChild($addressPart);
+
+                // Road
+                $addressPart = $xmlDoc->createElement('road',$address->straatnaam);
+                $addressParts->appendChild($addressPart);
+
+                // City
+                $addressPart = $xmlDoc->createElement('city',$address->woonplaats);
+                $addressParts->appendChild($addressPart);
+
+                // State
+                $addressPart = $xmlDoc->createElement('state',$address->provincie);
+                $addressParts->appendChild($addressPart);
+
+                // Postcode
+                $addressPart = $xmlDoc->createElement('postcode',$address->postcode);
+                $addressParts->appendChild($addressPart);
+
+                // Country + country_code (always NL for BAG)
+                $addressPart = $xmlDoc->createElement('country','Nederland');
+                $addressParts->appendChild($addressPart);
+                $addressPart = $xmlDoc->createElement('country_code','nl');
+                $addressParts->appendChild($addressPart);
+
+//                foreach($address as $key=>$value) {
+//                    // Skip empty
+//                    if(is_null($value)) continue;
+//
+//                    // Create elements for each key/value pair
+//                    $addressPart = $xmlDoc->createElement($key, $value);
+//                    $addressParts->appendChild($addressPart);
+//                }
+
+                // Result 'header'
+                // Full text address
+                $stringAddress = $houseNumber . ", " . $address->straatnaam . ", " . $address->woonplaats . ", "
+                    . $address->provincie . ", " . $address->postcode . ", Nederland, nl";
+                $result = $xmlDoc->createElement("result", $stringAddress);
+
+                // Place id
+                $result->setAttribute('place_id', $address->gid);
+
+                // Add header to doc
+                $xmlRoot->appendChild($result);
+
+                // Append the addressParts to the XML doc
+                $xmlRoot->appendChild($addressParts);
+            }
+
+
+            /* get the xml printed */
+//            header("content-type: text/xml; charset=UTF-8");
+//            header("Access-Control-Allow-Origin: *");
+            echo $xmlDoc->saveXML();
         }
+
     }
