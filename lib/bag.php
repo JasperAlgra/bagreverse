@@ -135,11 +135,11 @@
                 // Addressparts
                 $addressParts = $xmlDoc->createElement("addressparts");
 
-                // House nummber
+                // House number
                 $houseNumber = $address->huisnummer
                     . ($address->huisletter ? $address->huisletter : NULL)
                     . ($address->toevoeging ? " " . $address->toevoeging : NULL);
-                $addressPart = $xmlDoc->createElement('house_numer',$houseNumber);
+                $addressPart = $xmlDoc->createElement('house_number',$houseNumber);
                 $addressParts->appendChild($addressPart);
 
                 // Road
