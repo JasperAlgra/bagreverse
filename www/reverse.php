@@ -35,9 +35,14 @@
 //        Array(51.410433, 5.454866),
 //    )));
 
+    $radius = 150;
+    if (isset($_GET['radius'])) {
+        $radius = $_GET['radius'];
+    }
+
     // Search + output XML
     header("content-type: text/xml; charset=UTF-8");
     header("Access-Control-Allow-Origin: *");
     $bag
-        ->search($latLngs)
+        ->search($latLngs, $radius)
         ->outputXml();
