@@ -119,6 +119,32 @@
 
         }
 
+        public function searchPostal($postcode, $number) {
+
+        // SELECT ST_X(geopunt) as x, ST_Y(geopunt) as y FROM adres WHERE postcode = '$postcode' AND huisnummer = '$huisnummer' $toevoeging LIMIT 1;
+        // Max records per lat/lng
+            $maxRecords = 1;
+
+            $query = "SELECT ST_X(geopunt) as x, ST_Y(geopunt) as y, * FROM geo_adres WHERE postcode = '$postcode' AND huisnummer = '$number' LIMIT 1;";
+
+            $text = array(
+                'postode' => $postcode,
+                'huisnummer' => $number,
+            );
+
+//          return searchAddress($this->DB, $text);
+            // Do lookup
+            $row = $this->DB->getRow($query);
+            $latLng = rd2wgs($row->x, $row->y);
+            $row->lat = $latLng['lat'];
+            $row->lon = $latLng['lon'];
+            // Add result to BAGResults var
+            $this->BAGResults[] = $row;
+
+            // Return self
+            return $this;
+        }
+
         public function outputXml() {
 
             $xmlDoc = new DOMDocument('1.0', 'UTF-8');
