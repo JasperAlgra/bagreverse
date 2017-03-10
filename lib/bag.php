@@ -171,7 +171,7 @@ class bag {
             $result = $xmlDoc->createElement("result", $stringAddress);
 
             // Place id
-            $result->setAttribute('place_id', $address->gid);
+            if(isset($address->gid)) $result->setAttribute('place_id', $address->gid);
 
             // Add header to doc
             $xmlRoot->appendChild($result);
