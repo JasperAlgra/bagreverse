@@ -21,6 +21,11 @@ $latLngs = Array();
 // Get single lat/lon from GET
 if (isset($_GET['lat']) AND isset($_GET['lon'])) {
     $latLngs[] = Array($_GET['lat'], $_GET['lon']);
+
+    if($_GET['lat'] == "%s" OR $_GET['lon'] == "%s") {
+        http_response_code(400);
+        exit('Error. LAT or LON is set to "%s"');
+    }
 }
 
 // Get array of lats/lons from GET or POST
