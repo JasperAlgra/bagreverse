@@ -22,7 +22,7 @@ $latLngs = Array();
 if (isset($_GET['lat']) AND isset($_GET['lon'])) {
     $latLngs[] = Array($_GET['lat'], $_GET['lon']);
 
-    if($_GET['lat'] == "%s" OR $_GET['lon'] == "%s") {
+    if ($_GET['lat'] == "%s" OR $_GET['lon'] == "%s") {
         http_response_code(400);
         exit('Error. LAT or LON is set to "%s"');
     }
@@ -41,8 +41,14 @@ if (isset($_GET['radius'])) {
 }
 
 // Search + output XML
-header("content-type: text/xml; charset=UTF-8");
-header("Access-Control-Allow-Origin: *");
-$bag
-    ->search($latLngs, $radius)
-    ->outputXml();
+
+
+try {
+    $bag->search($latLngs, $radius)
+        ->outputXml();
+    header("content-type: text/xml; charset=UTF-8");
+    header("Access-Control-Allow-Origin: *");
+} catch (Exception $exception) {
+    http_response_code(400);
+    exit("No valid results for this lat/lon");
+}

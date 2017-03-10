@@ -94,7 +94,7 @@ class bag {
             $query = $this->DB->query("SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})");
             $rows = $query->fetchObject();
             // Add result to BAGResults var
-            $this->BAGResults[] = $rows;
+            if($rows) $this->BAGResults[] = $rows;
         }
 
         // Return self
@@ -129,6 +129,9 @@ class bag {
 
         /* append it to the document created */
         $xmlRoot = $xmlDoc->appendChild($xmlRoot);
+
+        // No valid results found?
+        if(!$this->BAGResults) throw new \Exception('No results');
 
         foreach ($this->BAGResults as $address) {
 
