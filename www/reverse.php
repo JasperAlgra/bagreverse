@@ -49,6 +49,19 @@ try {
     header("content-type: text/xml; charset=UTF-8");
     header("Access-Control-Allow-Origin: *");
 } catch (Exception $exception) {
+
+    // DB errors
+    if($exception->getCode() == 500) {
+        http_response_code(500);
+        exit($exception->getMessage());
+    }
+
+    if($exception->getCode() == 400) {
+        http_response_code(400);
+        exit("No valid results for this lat/lon");
+    }
+
+    // All other errors
     http_response_code(400);
-    exit("No valid results for this lat/lon");
+    exit("Error ". (getenv('APP_DEBUG')? $exception->getMessage(): null ));
 }

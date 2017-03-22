@@ -2,7 +2,7 @@
 
 * clone repo
 
-* install apache + php + pear
+* install apache + php
   Linux: apt-get install apache2 php5-pgsql php5-mysql
   Windows/xampp: extension=php_pgsql.dll (enable)
 

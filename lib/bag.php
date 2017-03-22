@@ -76,6 +76,7 @@ class bag {
      * @param int   $radius
      *
      * @return $this
+     * @throws \Exception
      */
     public function search(array $latLngs, $radius = 500) {
 
@@ -89,10 +90,15 @@ class bag {
             $rd = wgs2rd($latLng[0], $latLng[1]);
             $x = $rd['x'];
             $y = $rd['y'];
-
+            $q = "SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})";
             // Do lookup
-            $query = $this->DB->query("SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})");
-            $rows = $query->fetchObject();
+            try {
+                $query = $this->DB->query("SELECT * FROM nlx_adressen_voor_xy({$x},{$y},{$radius},{$maxRecords})");
+                $rows = $query->fetchObject();
+            } catch (\Exception $exception) {
+                $message = "DB Error". (getenv('APP_DEBUG')? $exception->getMessage(): null );
+                throw new \Exception($message, 500);
+            }
             // Add result to BAGResults var
             if($rows) $this->BAGResults[] = $rows;
         }
@@ -119,6 +125,10 @@ class bag {
         return $this;
     }
 
+
+    /**
+     * @throws \Exception
+     */
     public function outputXml() {
 
         $xmlDoc = new DOMDocument('1.0', 'UTF-8');
@@ -131,7 +141,7 @@ class bag {
         $xmlRoot = $xmlDoc->appendChild($xmlRoot);
 
         // No valid results found?
-        if(!$this->BAGResults) throw new \Exception('No results');
+        if(!$this->BAGResults) throw new \Exception('No results', 400);
 
         foreach ($this->BAGResults as $address) {
 
