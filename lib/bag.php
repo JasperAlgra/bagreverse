@@ -108,9 +108,13 @@ class bag {
 
     }
 
-    public function searchPostal($postcode, $number) {
-
-        $query = $this->DB->query("SELECT ST_X(geopunt) as x, ST_Y(geopunt) as y, * FROM geo_adres WHERE postcode = '$postcode' AND huisnummer = '$number' LIMIT 1;");
+    public function searchPostal($postcode, $number, $suffix='') {
+        $suffixQ = '';
+        if($suffix) {
+            $suffixQ = " AND huisnummertoevoeging = '{$suffix}' ";
+        }
+        
+        $query = $this->DB->query("SELECT ST_X(geopunt) as x, ST_Y(geopunt) as y, * FROM geo_adres WHERE postcode = '$postcode' AND huisnummer = '$number' {$suffixQ} LIMIT 1;");
         $row = $query->fetchObject();
 
         // Do lookup
