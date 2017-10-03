@@ -113,6 +113,8 @@ class bag {
         $query = $this->DB->query("SELECT ST_X(geopunt) as x, ST_Y(geopunt) as y, * FROM geo_adres WHERE postcode = '$postcode' AND huisnummer = '$number' LIMIT 1;");
         $row = $query->fetchObject();
 
+        if(!$row) return false;
+
         // Do lookup
         $latLng = rd2wgs($row->x, $row->y);
         $row->lat = $latLng['lat'];

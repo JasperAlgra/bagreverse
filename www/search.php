@@ -24,8 +24,12 @@ header("Access-Control-Allow-Origin: *");
 
 // Get single lat/lon from GET
 if (isset($_GET['number']) AND isset($_GET['postcode'])) {
-    $number = $_GET['number'];
-    $postcode = $_GET['postcode'];
+
+    // Only integers
+    $number = (int)$_GET['number'];
+
+    // Uppercase the postalcode + remove spaces
+    $postcode = str_replace(' ', '', strtoupper($_GET['postcode']));
 
     $bag
         ->searchPostal($postcode, $number);
