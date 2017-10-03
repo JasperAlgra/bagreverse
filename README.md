@@ -37,3 +37,9 @@
 * Test:
     /reverse.php?lat=52.283971&lon=4.854669
     Result: Boogschutter 154, 1188 BX, Amstelveen
+
+* Deploy: <br>
+  Gebruik php deployer. Zie https://deployer.org/docs/installation
+    `` dep deploy production``
+  nb. op windows powershell is rsync nodig. gebruik bijv: `choco install rsync`
+  nb2. op windows werkt rsync niet. Gebruik bash op windows als je niet heel veel haren kwijt wil zijn.
