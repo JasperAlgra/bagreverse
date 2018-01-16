@@ -25,13 +25,15 @@ host('vmgeo01.servers.kantoor.eztrack.nl')
     ->identityFile('~/.ssh/id_rsa')
     ->addSshOption('UserKnownHostsFile', '/dev/null')
     ->addSshOption('StrictHostKeyChecking', 'no')
-    ->forwardAgent()
+    // ->forwardAgent()
     ->set('deploy_path', '/var/apps/bagreverse')
     ->stage('staging');
 
-host('geo3.eztrack.nl')
+host('geo1.eztrack.nl')
     ->user('deploy')
     ->identityFile('~/.ssh/id_rsa')
+    ->addSshOption('UserKnownHostsFile', '/dev/null')
+    ->addSshOption('StrictHostKeyChecking', 'no')
     ->set('deploy_path', '/var/apps/bagreverse')
     ->stage('production');
 
