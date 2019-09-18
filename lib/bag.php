@@ -39,7 +39,7 @@ class bag {
         }
 
         // Get config from .env file
-        $dotEnv = new Dotenv('..');
+        $dotEnv = Dotenv::create(__DIR__.'/..');
         $dotEnv->load();
 
         // Create connection to the postgres DB

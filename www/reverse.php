@@ -28,6 +28,16 @@ if (isset($_GET['lat']) AND isset($_GET['lon'])) {
     }
 }
 
+// Get lat/lon from CLI arguments
+if(isset($_SERVER['argv'][1]) AND isset($_SERVER['argv'][2])) {
+    $latLngs[] = Array($_SERVER['argv'][1], $_SERVER['argv'][2]);
+
+    if (!floatval($_SERVER['argv'][1]) OR !floatval($_SERVER['argv'][2])) {
+        http_response_code(400);
+        exit("Error. CLI arguments '{$_SERVER['argv'][1]}' and '{$_SERVER['argv'][2]}' can only be float LAT/LON");
+    }
+}
+
 // Get array of lats/lons from GET or POST
 if (isset($_GET['latLngs'])) {
     $latLngs = json_decode($_GET['latLngs']);

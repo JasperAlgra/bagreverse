@@ -12,7 +12,8 @@
   "repositories": [
   ],
   "require": {
-    "vlucas/phpdotenv": "*"
+    "vlucas/phpdotenv": "*",
+    "ext-pdo": "*"
   },
   "autoload": {
     "psr-4": {
